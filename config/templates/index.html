@@ -9,6 +9,17 @@
 </head>
 <body>
     <h1 class="meu_h1">Minha página funcionou!!</h1>
-    <a href="{% url 'teste' %}">Clique aqui meu filho!</a>
+    
+    <ul>
+        {% for produto in produtos %}
+        <li>
+            <a href="{% url 'teste' produto.id %}">
+            <h2>{{produto.nome_produto}}</h2>
+            <p>Preço: {{produto.preco}}</p>
+            <p>Quantidade: {{produto.quantidade}}</p>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
 </body>
 </html>

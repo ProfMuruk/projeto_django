@@ -1,0 +1,104 @@
+baixar do github o projeto.
+mostrar o que foi mudado.
+executar no terminal o comando: pip install -r requirements.txt
+
+na pagina de views, vamos criar um dicionario para um produto, apenas para um teste:
+produtos = {
+    1: {"nome_produto": "toddynho",
+        "preco": 5.99,
+        "quantidade": 10, },
+
+    2: {"nome_produto": "toddynho",
+        "preco": 5.99,
+        "quantidade": 10, }
+}
+
+ir na pagina html index e criar um for para os produtos, criar também a estrutura que 
+irá mostrar os dados do produto
+
+{% for identificador, nome, preco, quantidade in produtos.items %}
+
+{% endfor %}
+
+criar no models uma classe modelo para nosso exemplo:
+
+from django.db import models
+
+from django.db import models
+
+class Produto(models.Model):
+    nome_produto = models.CharField(max_length=100, null=False, blank=False)
+    quantidade = models.IntegerField(blank=False, null=False)
+    preco = models.DecimalField(max_digits= 10,decimal_places= 2, blank=False, null=False)
+
+    def __str__(self):
+        return f"Produto [nome_produto={self.nome_produto}]"
+
+
+abrir um novo terminal, entrar no ambiente virtual para fazer a migration:
+python manage.py makemigrations
+
+para que seja efetivada a criação da tabela, vamos colocar o "migrate"
+com isso, até as migrações anteriores (erro em vermelho) foram criadas
+
+busque a extensão sqliteViewer
+
+como não temos ainda um meio de inserir os dados, vamos inserir via shell
+no prompt de comando vamos usar o seguinte comando: python manage.py shell
+
+from nome_do_app.models import Produto
+criar uma variavel para salvar os dados do nosso produto:
+
+produto = Produto(nome_produto="testar", quantidade=1.99, preco=10)
+por ultimo: produto.save()
+
+podemos verificar pelo proprio terminal se foi salvo, usando:
+Produto.objects.all()
+
+agora no nosso views vamos usar o comando: produtos = Produto.objects.all()
+para objetr todos os dados do nosso banco de dados
+
+para passar referencias:
+
+no nossa pagina html, vamos passar o id como referencia para que 
+possamos obter o id na nossa pagina
+
+na url do nosso app vamos passar as referencias que precisamos:
+
+vamos colocar no caminho um barra e o id:
+path('teste/<int:produto_id>', teste, name='teste'),
+
+agora em views.py vamos adicionar:
+def teste(request, produto_id):
+    produto = get_object_or_404(Produto, pk=produto_id)
+    return render(request, 'teste.html', {'produto': produto})
+
+para começar a criar nossos cruds vamos acessar o admin:
+localhost:8000/admin
+
+temos que criar nosso admin para acessar no prompt:
+python manage.py createsuperuser
+
+Usuario: luan
+email: luan...
+password: 123456
+
+
+agora no nosso admin da nossa aplicação:
+from django.contrib import admin
+from galeria.models import Produto
+
+admin.site.register(Produto)
+
+se quiser mostrar diferenciado do padrão:
+from django.contrib import admin
+from galeria.models import Produto
+
+class ListarProdutos(admin.ModelAdmin):
+    list_display = ("id", "nome_produto", "quantidade", "preco")
+    list_display_links = ("id", "nome_produto")
+    search_fields = ("nome_produto",)
+
+admin.site.register(Produto, ListarProdutos)
+
+
